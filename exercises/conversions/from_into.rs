@@ -18,7 +18,6 @@ impl Default for Person {
     }
 }
 
-// I AM NOT DONE
 // Your task is to complete this implementation
 // in order for the line `let p = Person::from("Mark,20")` to compile
 // Please note that you'll need to parse the age component into a `usize`
@@ -35,6 +34,23 @@ impl Default for Person {
 // Otherwise, then return an instantiated Person object with the results
 impl From<&str> for Person {
     fn from(s: &str) -> Person {
+        // Can be neglected as in this case the age rule will always fail
+        // if s.len() == 0 {
+        //     return Person::default();
+        // }
+        let mut splits = s.splitn(2, ',');
+        let name = splits.next().unwrap();
+        let part = splits.next().unwrap_or_default().parse::<usize>();
+        // Person can never be aged 0
+        let age = part.unwrap_or_default();
+        if  name.len() > 0 && age > 0 {
+            return Person {
+                name: String::from(name),
+                age: age
+            }           
+        } else {
+            return Person::default();
+        }
     }
 }
 
@@ -75,6 +91,7 @@ mod tests {
     fn test_bad_age() {
         // Test that "Mark.twenty" will return the default person due to an error in parsing age
         let p = Person::from("Mark,twenty");
+        println!("{:?}", p);
         assert_eq!(p.name, "John");
         assert_eq!(p.age, 30);
     }
